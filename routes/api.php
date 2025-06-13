@@ -28,3 +28,7 @@ Route::post('/sensors', [SensorController::class, 'store']);
 use App\Http\Controllers\VisitorController;
 Route::get('/visitors', [VisitorController::class, 'index']);
 Route::post('/visitors', [VisitorController::class, 'store']);
+
+// Summary routes
+use App\Http\Controllers\SummaryController;
+Route::get('/summary', [SummaryController::class, 'index']);
