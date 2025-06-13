@@ -52,6 +52,12 @@ return [
     */
 
     'channels' => [
+        'redis' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/redis.log'),
+            'level' => 'error',
+        ],
+        
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
