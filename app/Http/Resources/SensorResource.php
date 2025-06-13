@@ -12,6 +12,7 @@ class SensorResource extends JsonResource
             'id'       => $this->id,
             'name'     => $this->name,
             'status'   => $this->status,
+            'location_id' => $this->location_id,
             'location' => [
                 'id'   => $this->location->id,
                 'name' => $this->location->name,

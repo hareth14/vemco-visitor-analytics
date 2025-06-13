@@ -23,3 +23,8 @@ Route::post('/locations', [LocationController::class, 'store']);
 use App\Http\Controllers\SensorController;
 Route::get('/sensors', [SensorController::class, 'index']);
 Route::post('/sensors', [SensorController::class, 'store']);
+
+// Visitor routes
+use App\Http\Controllers\VisitorController;
+Route::get('/visitors', [VisitorController::class, 'index']);
+Route::post('/visitors', [VisitorController::class, 'store']);

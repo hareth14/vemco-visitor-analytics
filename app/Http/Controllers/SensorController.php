@@ -29,7 +29,7 @@ class SensorController extends Controller
             });
         } catch (\Exception $e) {
             // If Redis fails, fall back to the database
-            Log::channel('redis')->error('Redis cache failed', [
+            Log::channel('redis')->error('Redis cache failed in SensorController@index', [
                 'message' => $e->getMessage(),
                 'status' => $status,
                 'page' => $page,
@@ -70,7 +70,7 @@ class SensorController extends Controller
             // Clear the cache for sensors after creation
             Cache::tags(['sensors'])->flush();
         } catch (\Exception $e) {
-            Log::channel('redis')->error('Redis cache failed on sensor store', [
+            Log::channel('redis')->error('Redis cache failed in SensorController@store', [
                 'message' => $e->getMessage(),
             ]);
         }
