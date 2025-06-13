@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\CacheHelper;
 
 class SensorController extends Controller
 {
@@ -17,8 +18,13 @@ class SensorController extends Controller
         $page = $request->query('page', 1);
         $cacheKey = "sensors_{$status}_page_{$page}";
 
-        try {
-            $sensors = Cache::tags(['sensors'])->remember($cacheKey, now()->addMinutes(10), function () use ($status) {
+        // Use CacheHelper to handle caching with fallback
+        // If the status is 'all', we don't filter by status
+        $sensors = CacheHelper::rememberWithFallback(
+            $cacheKey,
+            ['sensors'],
+            10, // Cache duration in minutes
+            function () use ($status) {
                 $query = Sensor::with('location');
 
                 if (in_array($status, ['active', 'inactive'])) {
@@ -26,22 +32,9 @@ class SensorController extends Controller
                 }
 
                 return $query->paginate(10);
-            });
-        } catch (\Exception $e) {
-            // If Redis fails, fall back to the database
-            Log::channel('redis')->error('Redis cache failed in SensorController@index', [
-                'message' => $e->getMessage(),
-                'status' => $status,
-                'page' => $page,
-            ]);
-
-            $query = Sensor::with('location');
-            if (in_array($status, ['active', 'inactive'])) {
-                $query->where('status', $status);
-            }
-
-            $sensors = $query->paginate(10);
-        }
+            },
+            'SensorController@index'
+        );
 
         return SensorResource::collection($sensors);
     }
