@@ -1,0 +1,74 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: vemco-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - .:/var/www
+    depends_on:
+      - app
+    networks:
+      - vemco-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vemco-backend
+    container_name: vemco-app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
+    environment:
+      - "DB_HOST=mysql"
+      - "REDIS_HOST=redis"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - vemco-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: vemco-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vemco_analytics
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - vemco-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:alpine
+    container_name: vemco-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - vemco-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+networks:
+  vemco-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local

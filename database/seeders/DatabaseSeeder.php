@@ -2,21 +2,45 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Location;
+use App\Models\Sensor;
+use App\Models\Visitor;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // Locations
+        $mallA = Location::create(['name' => 'Mall A']);
+        $mallB = Location::create(['name' => 'Mall B']);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Sensors
+        $sensor1 = Sensor::create([
+            'name' => 'Sensor 01',
+            'status' => 'active',
+            'location_id' => $mallA->id
+        ]);
+
+        $sensor2 = Sensor::create([
+            'name' => 'Camera 02',
+            'status' => 'inactive',
+            'location_id' => $mallB->id
+        ]);
+
+        // Visitors
+        Visitor::create([
+            'location_id' => $mallA->id,
+            'sensor_id' => $sensor1->id,
+            'date' => '2025-05-10',
+            'count' => 3
+        ]);
+
+        Visitor::create([
+            'location_id' => $mallB->id,
+            'sensor_id' => $sensor2->id,
+            'date' => '2025-05-10',
+            'count' => 2
+        ]);
     }
 }

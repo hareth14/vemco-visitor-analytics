@@ -9,6 +9,18 @@ use Illuminate\Support\Facades\Log;
 // in case the Redis cache fails. It logs the error and executes the callback function to retrieve the data.
 class CacheHelper
 {
+    // NOTE: This fallback ensures the application keeps functioning even if Redis is down.
+    // You may switch to hard failure mode if strict Redis usage is required.
+    /**
+     * Cache a value with a fallback to the callback function if Redis fails.
+     *
+     * @param string $cacheKey The key under which to store the cached value.
+     * @param array $tags The tags to associate with the cache entry.
+     * @param int $minutes The number of minutes to cache the value.
+     * @param \Closure $callback The callback function to execute if the cache retrieval fails.
+     * @param string $logContext Context for logging errors.
+     * @return mixed The cached value or the result of the callback function.
+     */
     public static function rememberWithFallback($cacheKey, $tags, $minutes, \Closure $callback, string $logContext)
     {
         try {
