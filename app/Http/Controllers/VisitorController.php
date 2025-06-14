@@ -64,14 +64,10 @@ class VisitorController extends Controller
             ['count' => $data['count']]
         );
 
-        try {
-            // Clear the cache for visitors after creation
-            Cache::tags(['visitors'])->flush();
-        } catch (\Exception $e) {
-            Log::channel('redis')->error('Redis cache failed in VisitorController@store', [
-                'message' => $e->getMessage(),
-            ]);
-        }
+        // Flush the cache for visitors after storing a new visitor
+        // This ensures that the next request will fetch the updated list
+        // Use CacheHelper to handle cache flushing with fallback
+        CacheHelper::flushWithFallback(['visitors'], 'VisitorController@store');
 
         return new VisitorResource($visitor->load(['location', 'sensor']));
     }

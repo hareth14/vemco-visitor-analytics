@@ -22,4 +22,28 @@ class CacheHelper
             return $callback();
         }
     }
+
+    public static function flushWithFallback(array $tags, string $logContext = 'unknown')
+    {
+        try {
+            $store = Cache::getStore();
+
+            if (method_exists($store, 'tags')) {
+                // Redis is supported and tags are available
+                Cache::tags($tags)->flush();
+            } else {
+                // File driver (or other drivers without tags): do nothing
+                Log::warning("Cache store does not support tags for flushing", [
+                    'store' => get_class($store),
+                    'context' => $logContext,
+                    'tags' => $tags,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::channel('redis')->error("Redis cache flush failed in $logContext", [
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
 }

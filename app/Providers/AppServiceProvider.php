@@ -22,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             Cache::store('redis')->connection()->ping();
-            dd('Redis cache is available');
         } catch (\Throwable $e) {
             Log::warning("Redis is not available, falling back to file cache", [
                 'error' => $e->getMessage()

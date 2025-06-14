@@ -59,14 +59,10 @@ class SensorController extends Controller
             'location_id' => $request->location_id,
         ]);
 
-        try {
-            // Clear the cache for sensors after creation
-            Cache::tags(['sensors'])->flush();
-        } catch (\Exception $e) {
-            Log::channel('redis')->error('Redis cache failed in SensorController@store', [
-                'message' => $e->getMessage(),
-            ]);
-        }
+        // Flush the cache for sensors after creating a new sensor
+        // This ensures that the next request will fetch the updated list
+        // Use CacheHelper to handle cache flushing with fallback
+        CacheHelper::flushWithFallback(['sensors'], 'SensorController@store');
 
         return new SensorResource($sensor);
     }
