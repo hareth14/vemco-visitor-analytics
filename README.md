@@ -103,17 +103,24 @@ This project includes a Docker Compose setup for easy deployment of Laravel with
    ```bash
    docker-compose up -d --build
    ```
+   
+3. **Install PHP dependencies inside the container:**
+   After the app container is running, install dependencies:
 
-3. **Run database migrations and seeders inside the app container:**
+   ```bash
+   docker-compose exec app composer install
+   ```
+   
+4. **Run database migrations and seeders inside the app container:**
    ```bash
    docker-compose exec app php artisan migrate --seed
    ```
 
-4. **Access the application:**
+5. **Access the application:**
 
    Open your browser and visit [http://localhost:8080](http://localhost:8080)
 
-5. **Stop containers when done:**
+6. **Stop containers when done:**
    ```bash
    docker-compose down
    ```
