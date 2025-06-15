@@ -93,8 +93,12 @@ The API follows RESTful design principles and uses MySQL for the database and Re
 
 This project includes a Docker Compose setup for easy deployment of Laravel with MySQL, Redis, and Nginx.
 
-1. **Ensure Docker and Docker Compose are installed on your machine.**
-
+1. **Ensure Docker and Docker Compose are installed on your machine and clone the repository.**
+ ```bash
+   git clone https://github.com/hareth14/vemco-analytics.git
+   cd vemco-analytics
+   ```
+   
 2. **Build and start the containers:**
    ```bash
    docker-compose up -d --build
