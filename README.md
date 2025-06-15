@@ -96,9 +96,12 @@ This project includes a Docker Compose setup for easy deployment of Laravel with
 Laravel sometimes caches configuration values from the .env file into a compiled config.php file.
 To ensure Redis works correctly (especially for caching tagged data), we automatically run:
 
-php artisan config:clear
-
-php artisan cache:clear
+  ```bash
+  php artisan config:clear
+  ```
+  ```bash
+  php artisan cache:clear
+  ```
 
 during the Docker build process.
 
