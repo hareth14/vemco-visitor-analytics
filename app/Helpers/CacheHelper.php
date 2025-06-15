@@ -4,37 +4,51 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-
 // This helper class provides a method to cache results with a fallback mechanism
 // in case the Redis cache fails. It logs the error and executes the callback function to retrieve the data.
 class CacheHelper
-{
+{ 
     // NOTE: This fallback ensures the application keeps functioning even if Redis is down.
     // You may switch to hard failure mode if strict Redis usage is required.
     /**
      * Cache a value with a fallback to the callback function if Redis fails.
      *
-     * @param string $cacheKey The key under which to store the cached value.
-     * @param array $tags The tags to associate with the cache entry.
-     * @param int $minutes The number of minutes to cache the value.
-     * @param \Closure $callback The callback function to execute if the cache retrieval fails.
-     * @param string $logContext Context for logging errors.
-     * @return mixed The cached value or the result of the callback function.
+     * @param string $cacheKey
+     * @param array $tags
+     * @param string $ttlStrategy
+     * @param \Closure $callback
+     * @param string $logContext
+     * @return mixed
      */
-    public static function rememberWithFallback($cacheKey, $tags, $minutes, \Closure $callback, string $logContext)
+    public static function rememberWithFallback($cacheKey, array $tags, string $ttlStrategy, \Closure $callback, string $logContext)
     {
+        $minutes = match ($ttlStrategy) {
+            'very_high_freq' => 1,
+            'high_freq' => 5,
+            'low_freq'  => 60,
+            default     => 10,
+        };
+
         try {
+            // Log debug info only in local env
+            self::debugCacheCheck($cacheKey, $tags, $logContext);
+
             return Cache::tags($tags)->remember($cacheKey, now()->addMinutes($minutes), $callback);
         } catch (\Exception $e) {
             Log::channel('redis')->error("Redis cache failed in $logContext", [
                 'message' => $e->getMessage(),
             ]);
-
-            // fallback to original logic (callback)
             return $callback();
         }
     }
 
+    /**
+     * Flush the cache with nested tag support.
+     *
+     * @param array $tags
+     * @param string $logContext
+     * @return void
+     */
     public static function flushWithFallback(array $tags, string $logContext = 'unknown')
     {
         try {
@@ -55,6 +69,35 @@ class CacheHelper
             Log::channel('redis')->error("Redis cache flush failed in $logContext", [
                 'message' => $e->getMessage(),
             ]);
+        }
+    }
+
+    /**
+     * Forget a specific cache key, used for targeted invalidation.
+     *
+     * @param string $key
+     * @param string $logContext
+     */
+    public static function forgetWithFallback(string $key, string $logContext = 'unknown')
+    {
+        try {
+            Cache::forget($key);
+        } catch (\Exception $e) {
+            Log::channel('redis')->error("Redis forget failed in $logContext", [
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public static function debugCacheCheck($cacheKey, array $tags, string $context)
+    {
+        if (app()->environment('local')) {
+            try {
+                $has = Cache::tags($tags)->has($cacheKey);
+                Log::debug("[$context] Cache check for key [$cacheKey] with tags [" . implode(',', $tags) . "]: " . ($has ? 'HIT' : 'MISS'));
+            } catch (\Throwable $e) {
+                Log::warning("[$context] Failed to check tagged cache: " . $e->getMessage());
+            }
         }
     }
 

@@ -11,19 +11,18 @@ use App\Helpers\CacheHelper;
 
 class SensorController extends Controller
 {
-
     public function index(Request $request)
     {
         $status = $request->query('status', 'all');
         $page = $request->query('page', 1);
         $cacheKey = "sensors_{$status}_page_{$page}";
 
-        // Use CacheHelper to handle caching with fallback
+        // Use CacheHelper to handle caching with fallback and dynamic TTL
         // If the status is 'all', we don't filter by status
         $sensors = CacheHelper::rememberWithFallback(
             $cacheKey,
             ['sensors'],
-            10, // Cache duration in minutes
+            'high_freq', // High frequency for changing sensor list
             function () use ($status) {
                 $query = Sensor::with('location');
 
@@ -59,11 +58,13 @@ class SensorController extends Controller
             'location_id' => $request->location_id,
         ]);
 
-        // Flush the cache for sensors after creating a new sensor
-        // This ensures that the next request will fetch the updated list
-        // Use CacheHelper to handle cache flushing with fallback
+        // Flush the cache for sensors after creating a new sensor with specific tags
         CacheHelper::flushWithFallback(['sensors'], 'SensorController@store');
 
+
+        // Flush the summary cache if it exists
+        CacheHelper::forgetWithFallback('summary_dashboard', 'SensorController@store');
+        
         return new SensorResource($sensor);
     }
 }

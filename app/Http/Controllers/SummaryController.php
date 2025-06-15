@@ -1,22 +1,22 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Log;
 use App\Models\Visitor;
 use App\Models\Sensor;
 use Carbon\Carbon;
 use App\Helpers\CacheHelper;
 
 class SummaryController extends Controller
-{
+{ 
     public function index()
     {
         $cacheKey = 'summary_dashboard';
         // Use CacheHelper to handle caching with fallback
+
         $summary = CacheHelper::rememberWithFallback(
             $cacheKey,
             ['summary'],
-            1, // Cache duration in minutes
+            'very_high_freq',
             function () {
                 $sevenDaysAgo = Carbon::now()->subDays(7)->toDateString();
 
@@ -35,4 +35,5 @@ class SummaryController extends Controller
 
         return response()->json($summary);
     }
+
 }

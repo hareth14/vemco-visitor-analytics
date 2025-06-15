@@ -23,13 +23,12 @@ class VisitorController extends Controller
         // Fetch visitors for a specific date with caching
         // If a date is provided, we cache the results
         if ($date) {
-            $cacheKey = "visitors_date_{$date}";
-
+            $cacheKey = "visitors:date:" . $date;
             // Use CacheHelper to handle caching with fallback
             $visitors = CacheHelper::rememberWithFallback(
                 $cacheKey,
                 ['visitors'],
-                10, // Cache duration in minutes
+                'low_freq',
                 function () use ($date) {
                     return Visitor::with(['location', 'sensor'])
                         ->whereDate('date', $date)
@@ -38,8 +37,19 @@ class VisitorController extends Controller
                 'VisitorController@index'
             );
         } else {
-            // No date provided, fetch all without caching
-            $visitors = Visitor::with(['location', 'sensor'])->paginate(10);
+            // If no date is provided, fetch all visitors with pagination
+            // Use a different cache key for all visitors
+            $cacheKey = "visitors_all";
+
+            $visitors = CacheHelper::rememberWithFallback(
+                $cacheKey,
+                ['visitors'],
+                'low_freq',
+                function () {
+                    return Visitor::with(['location', 'sensor'])->paginate(10);
+                },
+                'VisitorController@index_all'
+            );
         }
 
         return VisitorResource::collection($visitors);
@@ -64,10 +74,15 @@ class VisitorController extends Controller
             ['count' => $data['count']]
         );
 
-        // Flush the cache for visitors after storing a new visitor
-        // This ensures that the next request will fetch the updated list
-        // Use CacheHelper to handle cache flushing with fallback
-        CacheHelper::flushWithFallback(['visitors'], 'VisitorController@store');
+        // Flush the cache for visitors of the specific date
+        $dateCacheKey = "visitors:date:" . $request->date;
+        CacheHelper::forgetWithFallback($dateCacheKey, 'VisitorController@store');
+
+        // Flush the cache for all visitors
+        CacheHelper::forgetWithFallback("visitors_all", 'VisitorController@store');
+
+        // Flush the summary cache if it exists
+        CacheHelper::forgetWithFallback('summary_dashboard', 'VisitorController@store');
 
         return new VisitorResource($visitor->load(['location', 'sensor']));
     }

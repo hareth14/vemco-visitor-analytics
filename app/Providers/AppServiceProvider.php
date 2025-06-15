@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
 
     protected function setupCacheFallback(): void
     {
+        Log::info("Cache driver in use: " . config('cache.default'));
         // if default cache driver is not redis, no need to check
         if (config('cache.default') !== 'redis') {
             return;

@@ -92,6 +92,18 @@ This project includes a Docker Compose setup for easy deployment of Laravel with
    docker-compose down
    ```
 
+⚠️ Important Note About Redis & Laravel Cache
+Laravel sometimes caches configuration values from the .env file into a compiled config.php file.
+To ensure Redis works correctly (especially for caching tagged data), we automatically run:
+
+php artisan config:clear
+
+php artisan cache:clear
+
+during the Docker build process.
+
+If you still experience issues with Redis not responding or falling back to file caching, check the Laravel logs for Redis connection errors and make sure the Redis container is healthy.
+
 ---
 
 ## API Endpoints
