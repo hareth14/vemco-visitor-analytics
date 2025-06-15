@@ -35,7 +35,7 @@ The API follows RESTful design principles and uses MySQL for the database and Re
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/hareth14/vemco-analytics
+   git clone https://github.com/hareth14/vemco-visitor-analytics
    cd vemco-visitor-analytics
    ```
 
