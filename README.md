@@ -50,6 +50,28 @@ The API follows RESTful design principles and uses MySQL for the database and Re
    cp .env.example .env
    ```
 
+### ⚠️ Important Notes
+
+- **Ensure Redis is running**  
+  Redis must be running as a service (e.g., on Windows) or via Docker before starting the Laravel application.
+
+- **Test Redis Connection**  
+  You can verify Redis is working by running:
+  ```bash
+  redis-cli ping
+  ```
+  Expected output:
+  ```
+  PONG
+  ```
+
+- **Clear Cache After `.env` Changes**  
+  If you modify `.env`, be sure to clear Laravel’s configuration and cache to avoid stale data:
+  ```bash
+  php artisan config:clear
+  php artisan cache:clear
+  ```
+
 4. **Generate application key:**
    ```bash
    php artisan key:generate
