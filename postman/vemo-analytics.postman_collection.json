@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "c201a979-4736-425b-bb44-64f6033eebfe",
+		"name": "vemo-analytics",
+		"description": "vemo-analytics API Collection for managing locations, sensors, visitors, and summary analytics.\n\nBase URLs available for local development and production environments.\n\nIncludes requests for:\n\n- Locations\n    \n- Sensors\n    \n- Visitors\n    \n- Summary\n    \n\nAll requests expect `Accept: application/json` header.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "579186",
+		"_collection_link": "https://www.postman.com/cooklyproject/workspace/vemco-api-task/collection/579186-c201a979-4736-425b-bb44-64f6033eebfe?action=share&source=collection_link&creator=579186"
+	},
+	"item": [
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "Get Locations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/locations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"locations"
+							]
+						},
+						"description": "Retrieve a list of all registered locations."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Locations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "SuperMarket A",
+									"description": "Must be a non-existing name",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/locations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"locations"
+							]
+						},
+						"description": "Add a new location by providing its name."
+					},
+					"response": []
+				}
+			],
+			"description": "Manage locations where sensors and visitors are tracked."
+		},
+		{
+			"name": "Sensors",
+			"item": [
+				{
+					"name": "Get Sensors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/sensors?page=1&status=active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sensors"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "number of page from pagination"
+								},
+								{
+									"key": "status",
+									"value": "active",
+									"description": "acitve or inactive"
+								}
+							]
+						},
+						"description": "Retrieve all sensors, optionally filter by status (active/inactive). Responses cached in Redis."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sensors",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Sensor 05",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "inactive",
+									"description": "active or inactive",
+									"type": "text"
+								},
+								{
+									"key": "location_id",
+									"value": "1",
+									"description": "Must be an existing location",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sensors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sensors"
+							]
+						},
+						"description": "Create a new sensor with name, status, and associated location ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Manage sensors linked to locations and track their status."
+		},
+		{
+			"name": "Visitors",
+			"item": [
+				{
+					"name": "Get Visitors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/visitors?date=2025-05-22",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"visitors"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-05-22",
+									"description": "Enter a date in YYYY-MM-DD format or leave it empty to retrieve all visitors."
+								}
+							]
+						},
+						"description": "Get visitor counts filtered by date (optional). Cached for frequently accessed dates."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Visitors",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "location_id",
+									"value": "1",
+									"description": "The unique identifier of a pre-existing location.",
+									"type": "text"
+								},
+								{
+									"key": "sensor_id",
+									"value": "1",
+									"description": "The unique identifier of a pre-existing sensor.",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2025-06-13",
+									"description": "YYYY-MM-DD",
+									"type": "text"
+								},
+								{
+									"key": "count",
+									"value": "380",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/visitors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"visitors"
+							]
+						},
+						"description": "Record new visitor count for a specific location, sensor, and date."
+					},
+					"response": []
+				}
+			],
+			"description": "Manage daily visitor counts per location and sensor."
+		},
+		{
+			"name": "Summary",
+			"item": [
+				{
+					"name": "Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/summary",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"summary"
+							]
+						},
+						"description": "Returns total visitors in last 7 days, and counts of active vs inactive sensors. Cached via Redis."
+					},
+					"response": []
+				}
+			],
+			"description": "Provide aggregated analytics summary."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

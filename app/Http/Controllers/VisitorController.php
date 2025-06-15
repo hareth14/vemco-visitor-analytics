@@ -39,7 +39,7 @@ class VisitorController extends Controller
             );
         } else {
             // No date provided, fetch all without caching
-            $visitors = Visitor::with(['location', 'sensor'])->get();
+            $visitors = Visitor::with(['location', 'sensor'])->paginate(10);
         }
 
         return VisitorResource::collection($visitors);
