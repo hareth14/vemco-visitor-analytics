@@ -168,7 +168,7 @@ docker-compose exec app php artisan test
 
 A Postman collection is provided to facilitate API testing.
 
-- Import the `Vemco Visitor Analytics API.postman_collection.json` file located in the `postman` directory.
+- Import the `vemo-analytics.postman_collection.json` file located in the `postman` directory.
 - The collection includes all endpoints with example requests and expected responses.
 
 ---
