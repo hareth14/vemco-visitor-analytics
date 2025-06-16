@@ -94,7 +94,7 @@ This project includes a Docker Compose setup for easy deployment of Laravel with
 
 1. **Ensure Docker and Docker Compose are installed on your machine and clone the repository:**
    ```bash
-   git clone https://github.com/hareth14/vemco-analytics.git
+   git clone https://github.com/hareth14/vemco-visitor-analytics.git
    cd vemco-analytics
    ```
 
