@@ -88,58 +88,83 @@ The API follows RESTful design principles and uses MySQL for the database and Re
    ```
 
 ---
-
 ### Docker Setup (Recommended)
 
 This project includes a Docker Compose setup for easy deployment of Laravel with MySQL, Redis, and Nginx.
 
-1. **Ensure Docker and Docker Compose are installed on your machine and clone the repository.**
+1. **Ensure Docker and Docker Compose are installed on your machine and clone the repository:**
    ```bash
    git clone https://github.com/hareth14/vemco-analytics.git
    cd vemco-analytics
    ```
-   
-2. **Build and start the containers:**
+
+2. **Copy and configure the environment file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then open `.env` and make sure the following settings match the Docker setup:
+
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=mysql
+   DB_PORT=3306
+   DB_DATABASE=vemco_analytics
+   DB_USERNAME=root
+   DB_PASSWORD=root
+
+   CACHE_DRIVER=redis
+   REDIS_HOST=redis
+   REDIS_PORT=6379
+   REDIS_PASSWORD=null
+   ```
+
+3. **Build and start the containers:**
    ```bash
    docker-compose up -d --build
    ```
-   
-3. **Install PHP dependencies inside the container:**
-   After the app container is running, install dependencies:
+
+4. **Fix permissions (required for logging and caching):**
+   ```bash
+   docker-compose exec app php artisan storage:link
+   docker-compose exec app chmod -R 775 storage bootstrap/cache
+   docker-compose exec app chown -R www-data:www-data storage bootstrap/cache
+   ```
+
+5. **Install PHP dependencies inside the container:**
+   After the app container is running, run:
 
    ```bash
    docker-compose exec app composer install
    ```
-   
-4. **Run database migrations and seeders inside the app container:**
+
+6. **Run database migrations and seeders:**
    ```bash
-   docker-compose exec app php artisan migrate --seed
+   docker-compose exec app php artisan migrate:fresh --seed
    ```
 
-5. **Access the application:**
-
+7. **Access the application:**
    Open your browser and visit [http://localhost:8080](http://localhost:8080)
 
-6. **Stop containers when done:**
+8. **Stop containers when done:**
    ```bash
    docker-compose down
    ```
 
+---
+
 ### ⚠️ Important Note About Redis & Laravel Cache
 
-  Laravel sometimes caches configuration values from the .env file into a compiled config.php file.
+Laravel sometimes caches configuration values from the `.env` file into a compiled `config.php` file.
 
+To ensure Redis works correctly (especially for tagged cache), we automatically run the following during the Docker build process:
 
-  - **To ensure Redis works correctly (especially for caching tagged data), we automatically run:**    
-  ```bash
-    php artisan config:clear
-    php artisan cache:clear
-  ```
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
 
-
-during the Docker build process.
-
-If you still experience issues with Redis not responding or falling back to file caching, check the Laravel logs for Redis connection errors and make sure the Redis container is healthy.
+If Redis issues persist (e.g. falling back to file cache), check your Laravel logs and make sure the Redis container is up and healthy.
 
 ---
 

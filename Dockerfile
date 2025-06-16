@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     vim \
+    netcat-openbsd \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
@@ -24,8 +25,6 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www
-
-RUN php artisan config:clear && php artisan cache:clear
 
 EXPOSE 9000
 
