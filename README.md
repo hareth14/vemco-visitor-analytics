@@ -1,16 +1,4 @@
 # Vemco Visitor Analytics API
-
-## Table of Contents
-
-1. [Project Overview](#project-overview)
-2. [Requirements](#requirements)
-3. [Getting Started](#getting-started)
-4. [Docker Setup](#docker-setup)
-5. [API Endpoints](#api-endpoints)
-6. [Testing](#testing)
-7. [Postman Collection](#postman-collection)
-8. [Contact](#contact)
-
 [![GitHub repo](https://img.shields.io/badge/repo-vemco--visitor--analytics-blue)](https://github.com/hareth14/vemco-visitor-analytics)
 
 ## Project Overview
