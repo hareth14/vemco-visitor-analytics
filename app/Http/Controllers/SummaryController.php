@@ -8,6 +8,7 @@ use App\Helpers\CacheHelper;
 
 class SummaryController extends Controller
 { 
+    // GET /api/summary
     public function index()
     {
         $cacheKey = 'summary_dashboard';

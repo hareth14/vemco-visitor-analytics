@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Location;
 use App\Http\Resources\LocationResource;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreLocationRequest;
 
 class LocationController extends Controller
 {
@@ -16,13 +17,9 @@ class LocationController extends Controller
     }
 
     // POST /api/locations
-    public function store(Request $request)
+    public function store(StoreLocationRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:locations,name',
-        ]);
-
-        $location = Location::create($validated);
+        $location = Location::create($request->validated());
 
         return new LocationResource($location);
     }

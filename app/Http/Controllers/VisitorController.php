@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\VisitorResource;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use App\Rules\SensorBelongsToLocation;
 use App\Helpers\CacheHelper;
+use App\Http\Requests\StoreVisitorRequest;
+use Illuminate\Support\Facades\Cache;
 
 class VisitorController extends Controller
 {
+    // GET /api/visitors
     public function index(Request $request)
     {
         // Validate date format if provided
@@ -55,15 +55,10 @@ class VisitorController extends Controller
         return VisitorResource::collection($visitors);
     }
 
-
-    public function store(Request $request)
+    // POST /api/visitors
+    public function store(StoreVisitorRequest $request)
     {
-        $data = $request->validate([
-            'location_id' => ['required', 'exists:locations,id'],
-            'sensor_id' => ['required', 'exists:sensors,id', new SensorBelongsToLocation($request->location_id)],
-            'date'        => ['required', 'date_format:Y-m-d'],
-            'count'       => ['required', 'integer', 'min:0'],
-        ]);
+        $data = $request->validated();
 
         $visitor = Visitor::updateOrCreate(
             [
@@ -75,8 +70,8 @@ class VisitorController extends Controller
         );
 
         // Flush the cache for visitors of the specific date
-        $dateCacheKey = "visitors:date:" . $request->date;
-        CacheHelper::forgetWithFallback($dateCacheKey, 'VisitorController@store');
+        $dateCacheKey = "visitors:date:" . $data['date'];
+        CacheHelper::forgetWithFallback($dateCacheKey, 'VisitorController@store', ['visitors']);
 
         // Flush the cache for all visitors
         CacheHelper::forgetWithFallback("visitors_all", 'VisitorController@store');
@@ -86,4 +81,5 @@ class VisitorController extends Controller
 
         return new VisitorResource($visitor->load(['location', 'sensor']));
     }
+
 }

@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\SensorResource;
 use App\Models\Sensor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Log;
 use App\Helpers\CacheHelper;
+use App\Http\Requests\StoreSensorRequest;
 
 class SensorController extends Controller
 {
+    // GET /api/sensors
     public function index(Request $request)
     {
         $status = $request->query('status', 'all');
@@ -38,29 +38,14 @@ class SensorController extends Controller
         return SensorResource::collection($sensors);
     }
 
-    public function store(Request $request)
+    // POST /api/sensors
+    public function store(StoreSensorRequest $request)
     {
-        $request->validate([
-            'location_id' => ['required', 'exists:locations,id'],
-            'name' => [
-                'required',
-                'string',
-                Rule::unique('sensors')->where(fn ($query) =>
-                    $query->where('location_id', $request->location_id)
-                ),
-            ],
-            'status' => ['required', Rule::in(['active', 'inactive'])],
-        ]);
-
-        $sensor = Sensor::create([
-            'name' => $request->name,
-            'status' => $request->status,
-            'location_id' => $request->location_id,
-        ]);
+        // Validate the request using the StoreSensorRequest
+        $sensor = Sensor::create($request->validated());
 
         // Flush the cache for sensors after creating a new sensor with specific tags
         CacheHelper::flushWithFallback(['sensors'], 'SensorController@store');
-
 
         // Flush the summary cache if it exists
         CacheHelper::forgetWithFallback('summary_dashboard', 'SensorController@store');

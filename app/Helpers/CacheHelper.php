@@ -78,10 +78,14 @@ class CacheHelper
      * @param string $key
      * @param string $logContext
      */
-    public static function forgetWithFallback(string $key, string $logContext = 'unknown')
+    public static function forgetWithFallback(string $key, string $logContext = 'unknown', array $tags = [])
     {
         try {
-            Cache::forget($key);
+            if (!empty($tags)) {
+                Cache::tags($tags)->forget($key);
+            } else {
+                Cache::forget($key);
+            }
         } catch (\Exception $e) {
             Log::channel('redis')->error("Redis forget failed in $logContext", [
                 'message' => $e->getMessage(),
