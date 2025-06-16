@@ -8,6 +8,7 @@ use App\Models\Visitor;
 use App\Models\Sensor;
 use App\Models\Location;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class SummaryControllerTest extends TestCase
 {
@@ -50,5 +51,28 @@ class SummaryControllerTest extends TestCase
             'active_sensors' => 3,
             'inactive_sensors' => 2,
         ]);
+    }
+
+    /** @test */
+    public function test_summary_cache_returns_cached_data_if_exists()
+    {
+        $cachedData = [
+            'total_visitors_last_7_days' => 99,
+            'active_sensors' => 7,
+            'inactive_sensors' => 0,
+        ];
+        
+        Cache::shouldReceive('tags')
+            ->with(['summary'])
+            ->andReturnSelf();
+
+        Cache::shouldReceive('remember')
+            ->with('summary_dashboard', \Mockery::any(), \Mockery::type(\Closure::class))
+            ->andReturn($cachedData);
+
+        $response = $this->getJson('/api/summary');
+
+        $response->assertStatus(200);
+        $response->assertExactJson($cachedData);
     }
 }

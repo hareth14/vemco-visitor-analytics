@@ -7,7 +7,6 @@ use App\Models\Visitor;
 use Illuminate\Http\Request;
 use App\Helpers\CacheHelper;
 use App\Http\Requests\StoreVisitorRequest;
-use Illuminate\Support\Facades\Cache;
 
 class VisitorController extends Controller
 {

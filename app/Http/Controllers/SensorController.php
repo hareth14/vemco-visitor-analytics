@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\SensorResource;
 use App\Models\Sensor;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Helpers\CacheHelper;
 use App\Http\Requests\StoreSensorRequest;
 
