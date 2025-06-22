@@ -16,9 +16,9 @@ class StoreVisitorRequest extends FormRequest
     {
         return [
             'location_id' => ['required', 'exists:locations,id'],
-            'sensor_id' => ['required', 'exists:sensors,id', new SensorBelongsToLocation($this->input('location_id'))],
-            'date' => ['required', 'date_format:Y-m-d'],
-            'count' => ['required', 'integer', 'min:0'],
+            'sensor_id'   => ['required', 'exists:sensors,id', new SensorBelongsToLocation($this->input('location_id'))],
+            'date'        => ['required', 'date_format:Y-m-d'],
+            'count'       => ['required', 'integer', 'min:0'],
         ];
     }
 }

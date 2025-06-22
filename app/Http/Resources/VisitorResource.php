@@ -11,7 +11,7 @@ class VisitorResource extends JsonResource
         return [
             'id'          => $this->id,
             'location_id' => $this->location_id,
-            'sensor_id' => $this->sensor_id,
+            'sensor_id'   => $this->sensor_id,
             'date'        => $this->date,
             'count'       => $this->count,
             'sensor'      => new SensorResource($this->whenLoaded('sensor')),

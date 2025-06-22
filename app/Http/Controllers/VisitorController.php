@@ -76,7 +76,7 @@ class VisitorController extends Controller
         CacheHelper::forgetWithFallback("visitors_all", 'VisitorController@store');
 
         // Flush the summary cache if it exists
-        CacheHelper::forgetWithFallback('summary_dashboard', 'VisitorController@store');
+        CacheHelper::forgetWithFallback('summary_dashboard', 'VisitorController@store', ['summary']);
 
         return new VisitorResource($visitor->load(['location', 'sensor']));
     }
