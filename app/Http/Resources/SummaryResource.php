@@ -10,8 +10,8 @@ class SummaryResource extends JsonResource
     {
         return [
             'total_visitors_last_7_days' => $this['total_visitors_last_7_days'],
-            'active_sensors' => $this['active_sensors'],
-            'inactive_sensors' => $this['inactive_sensors'],
+            'active_sensors'             => $this['active_sensors'],
+            'inactive_sensors'           => $this['inactive_sensors'],
         ];
     }
 }

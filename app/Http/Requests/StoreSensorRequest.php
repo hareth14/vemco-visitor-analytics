@@ -24,11 +24,11 @@ class StoreSensorRequest extends FormRequest
     {
         return [
             'location_id' => ['required', 'exists:locations,id'],
-            'name' => [
+            'name'        => [
                 'required',
                 'string',
-                Rule::unique('sensors')->where(fn ($query) =>
-                    $query->where('location_id', $this->input('location_id'))
+                Rule::unique('sensors')->where(
+                    fn ($query) => $query->where('location_id', $this->input('location_id'))
                 ),
             ],
             'status' => ['required', new Enum(SensorStatus::class)],

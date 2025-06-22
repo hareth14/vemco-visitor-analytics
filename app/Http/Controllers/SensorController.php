@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SensorResource;
@@ -18,7 +19,7 @@ class SensorController extends Controller
         $statusEnum = $statusParam !== 'all'
             ? SensorStatus::tryFrom($statusParam)
             : null;
-        
+
         $cacheKey = "sensors_{$statusParam}_page_{$page}";
         // Use CacheHelper to handle caching with fallback and dynamic TTL
         // If the status is 'all', we don't filter by status
@@ -47,8 +48,8 @@ class SensorController extends Controller
         CacheHelper::flushWithFallback(['sensors'], 'SensorController@store');
 
         // Flush the summary cache if it exists
-        CacheHelper::forgetWithFallback('summary_dashboard', 'SensorController@store');
-        
+        CacheHelper::forgetWithFallback('summary_dashboard', 'SensorController@store', ['summary']);
+
         return new SensorResource($sensor);
     }
 }
