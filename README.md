@@ -1,4 +1,5 @@
 # Vemco Visitor Analytics API
+[![GitHub repo](https://img.shields.io/badge/repo-vemco--visitor--analytics-blue)](https://github.com/hareth14/vemco-visitor-analytics)
 
 ## Project Overview
 
@@ -35,7 +36,7 @@ The API follows RESTful design principles and uses MySQL for the database and Re
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/hareth14/vemco-visitor-analytics
+   git clone https://github.com/hareth14/vemco-visitor-analytics.git
    cd vemco-visitor-analytics
    ```
 
@@ -95,7 +96,7 @@ This project includes a Docker Compose setup for easy deployment of Laravel with
 1. **Ensure Docker and Docker Compose are installed on your machine and clone the repository:**
    ```bash
    git clone https://github.com/hareth14/vemco-visitor-analytics.git
-   cd vemco-analytics
+   cd vemco-visitor-analytics
    ```
 
 2. **Copy and configure the environment file:**
