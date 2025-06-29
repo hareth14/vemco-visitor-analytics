@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Enums\SensorStatus;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreSensorRequest extends FormRequest
 {
@@ -22,14 +24,14 @@ class StoreSensorRequest extends FormRequest
     {
         return [
             'location_id' => ['required', 'exists:locations,id'],
-            'name' => [
+            'name'        => [
                 'required',
                 'string',
-                Rule::unique('sensors')->where(fn ($query) =>
-                    $query->where('location_id', $this->input('location_id'))
+                Rule::unique('sensors')->where(
+                    fn ($query) => $query->where('location_id', $this->input('location_id'))
                 ),
             ],
-            'status' => ['required', Rule::in(['active', 'inactive'])],
+            'status' => ['required', new Enum(SensorStatus::class)],
         ];
     }
 }

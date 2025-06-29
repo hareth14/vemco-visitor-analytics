@@ -4,10 +4,11 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+
 // This helper class provides a method to cache results with a fallback mechanism
 // in case the Redis cache fails. It logs the error and executes the callback function to retrieve the data.
 class CacheHelper
-{ 
+{
     // NOTE: This fallback ensures the application keeps functioning even if Redis is down.
     // You may switch to hard failure mode if strict Redis usage is required.
     /**
@@ -24,9 +25,9 @@ class CacheHelper
     {
         $minutes = match ($ttlStrategy) {
             'very_high_freq' => 1,
-            'high_freq' => 5,
-            'low_freq'  => 60,
-            default     => 10,
+            'high_freq'      => 5,
+            'low_freq'       => 60,
+            default          => 10,
         };
 
         try {
@@ -60,9 +61,9 @@ class CacheHelper
             } else {
                 // File driver (or other drivers without tags): do nothing
                 Log::warning("Cache store does not support tags for flushing", [
-                    'store' => get_class($store),
+                    'store'   => get_class($store),
                     'context' => $logContext,
-                    'tags' => $tags,
+                    'tags'    => $tags,
                 ]);
             }
         } catch (\Throwable $e) {

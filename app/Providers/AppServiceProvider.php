@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     protected function switchToFileCache(): void
     {
         config(['cache.default' => 'file']);
-        
+
         // Configuring session driver to file if redis is used
         if (config('session.driver') === 'redis') {
             config(['session.driver' => 'file']);
@@ -48,13 +48,13 @@ class AppServiceProvider extends ServiceProvider
         try {
             $testKey = 'cache_fallback_test';
             $testValue = now()->toString();
-            
+
             Cache::store('file')->put($testKey, $testValue, 10);
             $retrievedValue = Cache::store('file')->get($testKey);
-            
+
             if ($retrievedValue !== $testValue) {
                 Log::error("Cache failed to store or retrieve value correctly", [
-                    'expected' => $testValue,
+                    'expected'  => $testValue,
                     'retrieved' => $retrievedValue
                 ]);
             }

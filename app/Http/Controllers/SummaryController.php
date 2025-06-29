@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Visitor;
@@ -7,7 +8,7 @@ use Carbon\Carbon;
 use App\Helpers\CacheHelper;
 
 class SummaryController extends Controller
-{ 
+{
     // GET /api/summary
     public function index()
     {
@@ -22,13 +23,14 @@ class SummaryController extends Controller
                 $sevenDaysAgo = Carbon::now()->subDays(7)->toDateString();
 
                 $totalVisitors = Visitor::where('date', '>=', $sevenDaysAgo)->sum('count');
-                $activeSensors = Sensor::where('status', 'active')->count();
-                $inactiveSensors = Sensor::where('status', 'inactive')->count();
+                $sensorCounts = Sensor::selectRaw('status, COUNT(*) as count')
+                    ->groupBy('status')
+                    ->pluck('count', 'status');
 
                 return [
                     'total_visitors_last_7_days' => (int)$totalVisitors,
-                    'active_sensors' => $activeSensors,
-                    'inactive_sensors' => $inactiveSensors,
+                    'active_sensors'             => $sensorCounts['active'] ?? 0,
+                    'inactive_sensors'           => $sensorCounts['inactive'] ?? 0,
                 ];
             },
             'SummaryController@index'
